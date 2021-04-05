@@ -1,0 +1,34 @@
+Resources:
+        MyTaskDefinition:
+                Type: AWS::ECS::TaskDefinition
+                Properties: 
+                  ContainerDefinitions: 
+                    - Name: react-app-con
+                      Image: 855386938142.dkr.ecr.us-east-1.amazonaws.com/holicraft:latest
+                      PortMappings:
+                              - ContainerPort: 3000
+                  Cpu: 1024
+                  Family: ecs-testing
+                  Memory: 512
+                  RequiresCompatibilities: 
+                    - EC2
+                  Tags: 
+                    - Key: "Purpose"
+                      Value: "Testing"
+
+        MyService:
+                Type: AWS::ECS::Service
+                Properties: 
+                  Cluster: ecs-holicraft-cluster
+                  DesiredCount: 1
+                  LaunchType: EC2
+                  LoadBalancers:
+                          - ContainerName: "react-app-con"
+                            ContainerPort: 3000
+                            TargetGroupArn: arn:aws:elasticloadbalancing:us-east-1:855386938142:targetgroup/ecs-holicraft/c718e48f91f35e87
+                  ServiceName: holicraft-ecsService
+                  Tags: 
+                    - Key: "Purpose"
+                      Value: "Testing"
+                  TaskDefinition: !Ref MyTaskDefinition
+
